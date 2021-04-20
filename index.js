@@ -38,7 +38,8 @@ app.get('/api/restaurant', (request, response) => {
     response.json(data.filter(
       (d) => {
         const openHours = d.open_hours[moment(request.query.date.split(' ')[0]).format('ddd')];
-        const userTime = parseInt(moment(request.query.date).format('H'), 10);
+        const userTime = parseInt(moment(request.query.date).format('H'), 10)
+          + parseInt(moment(request.query.date).format('mm'), 10) / 60;
 
         if (openHours) {
           return d.name.toLowerCase().includes(request.query.query)
@@ -51,8 +52,8 @@ app.get('/api/restaurant', (request, response) => {
     response.json(data.filter(
       (d) => {
         const openHours = d.open_hours[moment(request.query.date.split(' ')[0]).format('ddd')];
-        const userTime = parseInt(moment(request.query.date).format('H'), 10);
-
+        const userTime = parseInt(moment(request.query.date).format('H'), 10)
+          + parseInt(moment(request.query.date).format('mm'), 10) / 60;
         if (openHours) {
           return openHours.open <= userTime && openHours.close > userTime;
         }
