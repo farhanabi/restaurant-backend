@@ -1,24 +1,66 @@
 const csv = require('csv-parser');
 const fs = require('fs');
 const express = require('express');
+const moment = require('moment');
 
 const app = express();
 
 app.use(express.static('build'));
 app.use(express.json());
 
+const parser = require('./utils/parser');
+
 const data = [];
 
 fs.createReadStream('hours.csv')
   .pipe(csv())
   .on('data', (d) => {
-    data.push(d);
+    const temp = {};
+    const openHourTemp = {};
+    temp.name = d['Restaurant Name'];
+    d['Open Hours'].split('/').forEach((o) => {
+      o.trim();
+      const openclose = parser.parseHours(o);
+      const days = parser.parseDays(o);
+      days.forEach((day) => {
+        openHourTemp[day] = {
+          open: openclose[0],
+          close: openclose[1],
+        };
+      });
+    });
+    temp.open_hours = openHourTemp;
+    data.push(temp);
   });
 
 app.get('/api/restaurant', (request, response) => {
-  if (request.query.query) {
+  if (request.query.query && request.query.date) {
     response.json(data.filter(
-      (d) => d['Restaurant Name'].toLowerCase().includes(request.query.query),
+      (d) => {
+        const openHours = d.open_hours[moment(request.query.date.split(' ')[0]).format('ddd')];
+        const userTime = parseInt(moment(request.query.date).format('H'), 10);
+
+        if (openHours) {
+          return d.name.toLowerCase().includes(request.query.query)
+            && openHours.open <= userTime
+            && openHours.close > userTime;
+        }
+      },
+    ));
+  } else if (request.query.date) {
+    response.json(data.filter(
+      (d) => {
+        const openHours = d.open_hours[moment(request.query.date.split(' ')[0]).format('ddd')];
+        const userTime = parseInt(moment(request.query.date).format('H'), 10);
+
+        if (openHours) {
+          return openHours.open <= userTime && openHours.close > userTime;
+        }
+      },
+    ));
+  } else if (request.query.query) {
+    response.json(data.filter(
+      (d) => d.name.toLowerCase().includes(request.query.query),
     ));
   } else {
     response.json(data);
