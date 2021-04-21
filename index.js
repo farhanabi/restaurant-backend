@@ -20,6 +20,7 @@ fs.createReadStream('hours.csv')
     const temp = {};
     const openHourTemp = {};
     temp.name = d['Restaurant Name'];
+    temp.hours = d['Open Hours'];
     d['Open Hours'].split('/').forEach((o) => {
       o.trim();
       const openclose = parser.parseHours(o);
