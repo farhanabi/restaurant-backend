@@ -1,5 +1,6 @@
 const csv = require('csv-parser');
 const fs = require('fs');
+const cors = require('cors');
 const express = require('express');
 const moment = require('moment');
 
@@ -7,6 +8,7 @@ const app = express();
 
 app.use(express.static('build'));
 app.use(express.json());
+app.use(cors());
 
 const parser = require('./utils/parser');
 
