@@ -46,7 +46,7 @@ app.get('/api/restaurant', (request, response) => {
         if (openHours) {
           return d.name.toLowerCase().includes(request.query.query.toLowerCase())
             && openHours.open <= userTime
-            && openHours.close > userTime;
+            && openHours.close >= userTime;
         }
       },
     ));
@@ -57,7 +57,7 @@ app.get('/api/restaurant', (request, response) => {
         const userTime = parseInt(moment(request.query.date).format('H'), 10)
           + parseInt(moment(request.query.date).format('mm'), 10) / 60;
         if (openHours) {
-          return openHours.open <= userTime && openHours.close > userTime;
+          return openHours.open <= userTime && openHours.close >= userTime;
         }
       },
     ));
