@@ -44,7 +44,7 @@ app.get('/api/restaurant', (request, response) => {
           + parseInt(moment(request.query.date).format('mm'), 10) / 60;
 
         if (openHours) {
-          return d.name.toLowerCase().includes(request.query.query)
+          return d.name.toLowerCase().includes(request.query.query.toLowerCase())
             && openHours.open <= userTime
             && openHours.close > userTime;
         }
@@ -63,7 +63,7 @@ app.get('/api/restaurant', (request, response) => {
     ));
   } else if (request.query.query) {
     response.json(data.filter(
-      (d) => d.name.toLowerCase().includes(request.query.query),
+      (d) => d.name.toLowerCase().includes(request.query.query.toLowerCase()),
     ));
   } else {
     response.json(data);
