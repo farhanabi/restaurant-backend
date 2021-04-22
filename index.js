@@ -3,6 +3,9 @@ const fs = require('fs');
 const cors = require('cors');
 const express = require('express');
 const moment = require('moment');
+const momentTZ = require('moment-timezone');
+
+momentTZ.tz.setDefault('Etc/UTC');
 
 const Collection = require('./models/collection');
 
