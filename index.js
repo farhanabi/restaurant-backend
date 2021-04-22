@@ -4,6 +4,8 @@ const cors = require('cors');
 const express = require('express');
 const moment = require('moment');
 
+const Collection = require('./models/collection');
+
 const app = express();
 
 app.use(express.static('build'));
@@ -71,6 +73,32 @@ app.get('/api/restaurant', (request, response) => {
   }
 });
 
+app.get('/api/collections', (request, response) => {
+  Collection.find({}).then((collection) => {
+    response.json(collection);
+  });
+});
+
+app.post('/api/collections', (request, response) => {
+  console.log(request.body);
+  if (request.body.restaurant_name === undefined || request.body.collection_name === undefined) {
+    return response.status(400).json({
+      error: 'name or collection name is missing',
+    });
+  }
+
+  const collcetion = new Collection({
+    name: request.body.collection_name,
+    restaurants: [request.body.restaurant_name],
+  });
+
+  collcetion.save()
+    .then((savedCollection) => savedCollection.toJSON())
+    .then((savedAndFormattedCollection) => {
+      response.json(savedAndFormattedCollection);
+    })
+    .catch((error) => next(error));
+});
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
