@@ -4,6 +4,9 @@
   "main": "index.js",
   "author": "Muhammad Farhan Abiyyullah",
   "license": "MIT",
+  "engines": {
+    "node": "12.18.2"
+  },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
