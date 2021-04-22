@@ -99,6 +99,20 @@ app.post('/api/collections', (request, response) => {
     })
     .catch((error) => next(error));
 });
+
+app.put('/api/collections/:id', (request, response, next) => {
+  const collection = {
+    name: request.body.collection_name,
+    restaurants: request.body.restaurants,
+  };
+
+  Collection.findByIdAndUpdate(request.params.id, collection, { new: true })
+    .then((updatedCollection) => {
+      response.json(updatedCollection);
+    })
+    .catch((error) => next(error));
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
